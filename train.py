@@ -35,6 +35,8 @@ def train_model(model,train_dl,optimizer,criterion):
 def evaluate (model, valid_dl):
     model.eval()
     epoch_acc = 0
+    list_true = []
+    list_pred = []
     with torch.no_grad():
         for x, y in valid_dl:
             y = y.type(torch.float32)
@@ -43,8 +45,13 @@ def evaluate (model, valid_dl):
 
             epoch_acc += acc.item()
 #             print(acc.item())
+#             predlist=torch.cat([predlist,preds.view(-1).cpu()])
+            y_hat_round = torch.round(torch.sigmoid(y_hat))
             
-    return epoch_acc / len(valid_dl)
+            list_true.append(y)
+            list_pred.append(y_hat_round)
+            
+    return epoch_acc / len(valid_dl),list_true,list_pred
 
 def binary_accuracy(preds, y):
     """
@@ -56,3 +63,13 @@ def binary_accuracy(preds, y):
     correct = (rounded_preds == y).float() #convert into float for division 
     acc = correct.sum() / len(correct)
     return acc
+
+def load_checkpoint(filepath):
+    checkpoint = torch.load(filepath)
+    model = checkpoint['model']
+    model.load_state_dict(checkpoint['state_dict'])
+    for parameter in model.parameters():
+        parameter.requires_grad = False
+
+    model.eval()
+    return model
