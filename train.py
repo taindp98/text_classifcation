@@ -16,8 +16,8 @@ def train_model(model,train_dl,optimizer,criterion):
     for x, y in train_dl:
         y = y.type(torch.float32)
         y_pred = model(x).squeeze(-1)
-
-
+#         y_pred = y_pred.type(torch.double)
+#         print('y_pred',y_pred)
         optimizer.zero_grad()
 
 #             loss = F.cross_entropy(y_pred, y)
