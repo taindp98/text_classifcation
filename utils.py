@@ -10,4 +10,4 @@ class ReviewsDataset(Dataset):
         return len(self.y)
     
     def __getitem__(self, idx):
-        return torch.from_numpy(self.X[idx].astype(np.float32)), self.y[idx]
+        return torch.from_numpy(self.X[idx][0].astype(np.float32)), self.y[idx]
