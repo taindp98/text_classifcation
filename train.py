@@ -9,7 +9,7 @@ import pandas as pd
 
 
 
-def train_model(model,train_dl,optimizer,criterion):
+def train_model(model,train_dl,optimizer,criterion,writer,epoch):
     model.train()
     
     epoch_loss = 0
@@ -28,6 +28,9 @@ def train_model(model,train_dl,optimizer,criterion):
 
 
         loss = criterion(y_pred,y)
+        
+        writer.add_scalar("Loss/train", loss, epoch)
+        
         loss.backward()
         optimizer.step()
         
@@ -37,7 +40,7 @@ def train_model(model,train_dl,optimizer,criterion):
 #     return epoch_loss / len(train_dl), epoch_acc / len(train_dl)
     return epoch_loss / len(train_dl)
 
-def evaluate (model, valid_dl,criterion):
+def evaluate (model, valid_dl,criterion,writer,epoch):
     model.eval()
     epoch_acc = 0
     epoch_loss = 0
@@ -50,6 +53,8 @@ def evaluate (model, valid_dl,criterion):
             y_hat = model(x)
 #             acc = binary_accuracy(y_hat,y)
             loss = criterion(y_hat,y)
+            writer.add_scalar("Loss/valid", loss, epoch)
+
             epoch_loss += loss.item()
 #             epoch_acc += acc.item()
 #             print(acc.item())
